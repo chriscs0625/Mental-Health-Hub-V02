@@ -52,6 +52,44 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// POST /api/auth/resend-otp
+router.post('/resend-otp', async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ message: 'Missing userId' });
+
+  try {
+    const [users] = await pool.query('SELECT email FROM users WHERE id = ? AND is_verified = FALSE', [userId]);
+    if (users.length === 0) {
+      return res.status(400).json({ message: 'User not found or already verified' });
+    }
+
+    const email = users[0].email;
+    const otp = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Invalidate old OTPs for this user
+    await pool.query('UPDATE otp_codes SET used = TRUE WHERE user_id = ? AND type = "email_verify"', [userId]);
+
+    await pool.query(
+      'INSERT INTO otp_codes (user_id, code, type, expires_at) VALUES (?, ?, "email_verify", ?)',
+      [userId, otp, expiresAt]
+    );
+
+    if (email) {
+      await sendEmail({
+        to: email,
+        subject: 'Your new verification code',
+        html: `<p>Your new verification code is: <strong>${otp}</strong></p>`
+      });
+    }
+
+    res.json({ message: 'New OTP sent' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // POST /api/auth/verify-email
 router.post('/verify-email', async (req, res) => {
   const { userId, code } = req.body;
