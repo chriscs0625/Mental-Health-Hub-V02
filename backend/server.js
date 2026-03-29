@@ -27,10 +27,14 @@ app.use('/api/', apiLimiter);
 // Route Imports
 const customerAuthRoutes = require('./src/routes/customer/auth');
 const adminAuthRoutes = require('./src/routes/admin/auth');
+const customerProductRoutes = require('./src/routes/customer/products');
+const adminProductRoutes = require('./src/routes/admin/products');
 
 // Mount Routes
 app.use('/api/auth', customerAuthRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
+app.use('/api/products', customerProductRoutes);
+app.use('/api/admin/products', adminProductRoutes);
 
 // Base route
 app.get('/', (req, res) => {
