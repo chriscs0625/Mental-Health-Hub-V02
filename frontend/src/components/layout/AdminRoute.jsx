@@ -1,19 +1,36 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-const AdminRoute = () => {
-  const { user, loading } = useAuth();
+const AdminRoute = ({ children }) => {
+  const { user, token, isAuthenticated, isLoading, logout } = useAuth();
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
+
+  // If not authenticated or not an admin -> redirect to admin login
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return <Navigate to="/admin/login" replace />;
   }
 
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/" replace />;
+  // Check token expiry locally to prevent flashing admin content
+  if (token) {
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const decodedJson = atob(payloadBase64);
+      const payload = JSON.parse(decodedJson);
+      
+      const isExpired = payload.exp * 1000 < Date.now();
+      if (isExpired) {
+        logout();
+        return <Navigate to="/admin/login" replace />;
+      }
+    } catch (e) {
+      logout();
+      return <Navigate to="/admin/login" replace />;
+    }
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default AdminRoute;

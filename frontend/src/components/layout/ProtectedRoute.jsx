@@ -1,20 +1,24 @@
 import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-const ProtectedRoute = () => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children }) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!isAuthenticated) {
+    // Pass the attempted route so we can return after login
+    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // If logged in but not verified -> redirect to /verify-email
+  if (user && !user.is_verified) {
+    return <Navigate to="/verify-email" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default ProtectedRoute;
