@@ -1,5 +1,14 @@
-﻿@tailwind base;
-@tailwind components;
-@tailwind utilities;
+﻿@import "tailwindcss";
 
-html, body { margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', system-ui, sans-serif; }
+@theme {
+  --color-primary: #2B6CB0;
+  --color-secondary: #EDF2F7;
+  --color-accent: #38B2AC;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+}
