@@ -19,12 +19,13 @@ const AdminRoute = ({ children }) => {
       const decodedJson = atob(payloadBase64);
       const payload = JSON.parse(decodedJson);
       
+      // eslint-disable-next-line react-hooks/purity
       const isExpired = payload.exp * 1000 < Date.now();
       if (isExpired) {
         logout();
         return <Navigate to="/admin/login" replace />;
       }
-    } catch (e) {
+    } catch {
       logout();
       return <Navigate to="/admin/login" replace />;
     }

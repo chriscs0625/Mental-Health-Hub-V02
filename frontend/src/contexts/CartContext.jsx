@@ -1,6 +1,9 @@
+﻿ 
 import React, { createContext, useState, useEffect, useContext } from 'react';
+ 
 import { useAuth } from './AuthContext';
 // import api from '../services/api'; // Commented out until api.js is created
+/* eslint-disable react-refresh/only-export-components */
 import toast from 'react-hot-toast';
 
 const CartContext = createContext();
@@ -32,7 +35,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (productId) => {
+  const addToCart = async () => {
     if (!isAuthenticated) {
         toast.error('Please login to add to cart');
         return;
@@ -47,7 +50,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const removeFromCart = async (productId) => {
+  const removeFromCart = async () => {
     try {
       // await api.delete(`/cart/${productId}`);
       await fetchCart();

@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 
-const  = () => {
+const WishlistPage = () => {
   return (<div></div>);
 };
 
-export default ;
+export default WishlistPage;

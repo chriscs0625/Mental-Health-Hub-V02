@@ -1,5 +1,5 @@
+﻿/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '../services/api'; // We will set this up shortly
 
 const AuthContext = createContext(null);
 
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
           // Optionally validate token with backend here by calling /api/auth/me
           // This ensures the token hasn't expired or been revoked
-        } catch (error) {
+        } catch {
           console.error('Failed to parse stored user or validate token');
           localStorage.removeItem('token');
           localStorage.removeItem('user');

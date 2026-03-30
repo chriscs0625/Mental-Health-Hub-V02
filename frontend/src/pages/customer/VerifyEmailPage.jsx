@@ -165,5 +165,3 @@ const VerifyEmailPage = () => {
 };
 
 export default VerifyEmailPage;
-
-export default ;
